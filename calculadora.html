@@ -1,0 +1,963 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Mi Fondo Jubilatorio | Calculadora de Libertad Financiera</title>
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:wght@400;700;900&family=DM+Sans:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0e17;
+    --surface: #111827;
+    --surface2: #1a2235;
+    --border: rgba(255,255,255,0.07);
+    --gold: #c9a84c;
+    --gold-light: #e8c97a;
+    --gold-dim: rgba(201,168,76,0.15);
+    --green: #3ecf8e;
+    --green-dim: rgba(62,207,142,0.12);
+    --text: #f0f0f0;
+    --text-muted: #8492a6;
+    --accent: #4f8ef7;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    min-height: 100vh;
+    overflow-x: hidden;
+  }
+
+  /* Background texture */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background:
+      radial-gradient(ellipse 80% 50% at 20% -10%, rgba(201,168,76,0.08) 0%, transparent 60%),
+      radial-gradient(ellipse 60% 40% at 80% 110%, rgba(79,142,247,0.06) 0%, transparent 60%);
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .container {
+    max-width: 960px;
+    margin: 0 auto;
+    padding: 40px 24px 80px;
+    position: relative;
+    z-index: 1;
+  }
+
+  /* Header */
+  header {
+    text-align: center;
+    margin-bottom: 56px;
+    animation: fadeDown 0.8s ease both;
+  }
+
+  .eyebrow {
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 3px;
+    text-transform: uppercase;
+    color: var(--gold);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+  }
+
+  .eyebrow::before, .eyebrow::after {
+    content: '';
+    width: 32px;
+    height: 1px;
+    background: var(--gold);
+    opacity: 0.5;
+  }
+
+  h1 {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(32px, 5vw, 54px);
+    font-weight: 900;
+    line-height: 1.1;
+    background: linear-gradient(135deg, #fff 30%, var(--gold-light));
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+    margin-bottom: 16px;
+  }
+
+  .subtitle {
+    color: var(--text-muted);
+    font-size: 16px;
+    font-weight: 300;
+    max-width: 520px;
+    margin: 0 auto;
+    line-height: 1.6;
+  }
+
+  /* Layout */
+  .grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 20px;
+  }
+
+  @media (max-width: 680px) {
+    .grid { grid-template-columns: 1fr; }
+    .grid-3 { grid-template-columns: 1fr !important; }
+  }
+
+  .grid-3 {
+    display: grid;
+    grid-template-columns: 1fr 1fr 1fr;
+    gap: 20px;
+    margin-bottom: 20px;
+  }
+
+  /* Cards */
+  .card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 24px;
+    animation: fadeUp 0.6s ease both;
+  }
+
+  .card-gold {
+    border-color: rgba(201,168,76,0.25);
+    background: linear-gradient(135deg, var(--surface) 0%, rgba(201,168,76,0.05) 100%);
+  }
+
+  /* Form elements */
+  .field {
+    margin-bottom: 0;
+  }
+
+  .field label {
+    display: block;
+    font-size: 11px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 10px;
+  }
+
+  .input-wrap {
+    position: relative;
+    display: flex;
+    align-items: center;
+  }
+
+  .input-wrap .prefix {
+    position: absolute;
+    left: 14px;
+    color: var(--gold);
+    font-weight: 600;
+    font-size: 14px;
+    pointer-events: none;
+  }
+
+  .input-wrap .suffix {
+    position: absolute;
+    right: 14px;
+    color: var(--text-muted);
+    font-size: 13px;
+    pointer-events: none;
+  }
+
+  input[type="number"], select {
+    width: 100%;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    color: var(--text);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 18px;
+    font-weight: 500;
+    padding: 13px 42px 13px 36px;
+    outline: none;
+    transition: border-color 0.2s, box-shadow 0.2s;
+    -moz-appearance: textfield;
+  }
+
+  input[type="number"]::-webkit-inner-spin-button,
+  input[type="number"]::-webkit-outer-spin-button { -webkit-appearance: none; }
+
+  input[type="number"]:focus, select:focus {
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(201,168,76,0.12);
+  }
+
+  select {
+    padding: 13px 14px;
+    cursor: pointer;
+    font-size: 14px;
+  }
+
+  /* Range slider */
+  .range-wrap {
+    position: relative;
+  }
+
+  input[type="range"] {
+    width: 100%;
+    height: 4px;
+    -webkit-appearance: none;
+    background: var(--surface2);
+    border-radius: 2px;
+    outline: none;
+    margin-top: 10px;
+    cursor: pointer;
+  }
+
+  input[type="range"]::-webkit-slider-thumb {
+    -webkit-appearance: none;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--gold);
+    border: 3px solid var(--bg);
+    box-shadow: 0 0 0 2px var(--gold);
+    cursor: pointer;
+    transition: transform 0.15s;
+  }
+
+  input[type="range"]::-webkit-slider-thumb:hover {
+    transform: scale(1.2);
+  }
+
+  .range-value {
+    font-size: 28px;
+    font-weight: 600;
+    color: var(--gold-light);
+    line-height: 1;
+    margin-bottom: 4px;
+  }
+
+  .range-label {
+    font-size: 11px;
+    text-transform: uppercase;
+    letter-spacing: 1.5px;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+  }
+
+  /* Results section */
+  .results-header {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-bottom: 20px;
+    animation: fadeUp 0.6s 0.3s ease both;
+  }
+
+  .results-header h2 {
+    font-family: 'Playfair Display', serif;
+    font-size: 22px;
+    font-weight: 700;
+  }
+
+  .divider {
+    flex: 1;
+    height: 1px;
+    background: var(--border);
+  }
+
+  /* KPI cards */
+  .kpi-grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    margin-bottom: 20px;
+    animation: fadeUp 0.6s 0.4s ease both;
+  }
+
+  @media (max-width: 680px) {
+    .kpi-grid { grid-template-columns: 1fr 1fr; }
+  }
+
+  .kpi {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 14px;
+    padding: 20px;
+    text-align: center;
+    transition: transform 0.2s;
+  }
+
+  .kpi:hover { transform: translateY(-2px); }
+
+  .kpi.highlight {
+    background: linear-gradient(135deg, rgba(201,168,76,0.1), rgba(201,168,76,0.03));
+    border-color: rgba(201,168,76,0.3);
+  }
+
+  .kpi.highlight-green {
+    background: linear-gradient(135deg, rgba(62,207,142,0.1), rgba(62,207,142,0.02));
+    border-color: rgba(62,207,142,0.25);
+  }
+
+  .kpi-label {
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 8px;
+  }
+
+  .kpi-value {
+    font-family: 'Playfair Display', serif;
+    font-size: clamp(18px, 2.5vw, 26px);
+    font-weight: 700;
+    color: var(--text);
+    line-height: 1;
+  }
+
+  .kpi.highlight .kpi-value { color: var(--gold-light); }
+  .kpi.highlight-green .kpi-value { color: var(--green); }
+
+  .kpi-sub {
+    font-size: 11px;
+    color: var(--text-muted);
+    margin-top: 6px;
+  }
+
+  /* Chart */
+  .chart-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 28px;
+    margin-bottom: 20px;
+    animation: fadeUp 0.6s 0.5s ease both;
+  }
+
+  .chart-title {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+    margin-bottom: 20px;
+  }
+
+  canvas { width: 100% !important; }
+
+  /* Table */
+  .table-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    animation: fadeUp 0.6s 0.6s ease both;
+  }
+
+  .table-header {
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+  }
+
+  .table-title {
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 1.5px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  .toggle-table {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    color: var(--text-muted);
+    padding: 6px 14px;
+    border-radius: 6px;
+    font-size: 12px;
+    font-family: 'DM Sans', sans-serif;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .toggle-table:hover {
+    border-color: var(--gold);
+    color: var(--gold);
+  }
+
+  table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 13px;
+  }
+
+  th {
+    background: var(--surface2);
+    padding: 11px 20px;
+    text-align: right;
+    font-size: 10px;
+    font-weight: 600;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    color: var(--text-muted);
+  }
+
+  th:first-child { text-align: left; }
+
+  td {
+    padding: 11px 20px;
+    text-align: right;
+    border-bottom: 1px solid rgba(255,255,255,0.04);
+    font-variant-numeric: tabular-nums;
+  }
+
+  td:first-child { text-align: left; color: var(--text-muted); font-size: 12px; }
+
+  tr:last-child td { border-bottom: none; }
+  tr:hover td { background: rgba(255,255,255,0.02); }
+
+  .td-gold { color: var(--gold-light); font-weight: 600; }
+  .td-green { color: var(--green); }
+
+  /* Disclaimer */
+  .disclaimer {
+    margin-top: 32px;
+    padding: 16px 20px;
+    background: rgba(255,255,255,0.03);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    font-size: 11px;
+    color: var(--text-muted);
+    line-height: 1.6;
+    text-align: center;
+    animation: fadeUp 0.6s 0.7s ease both;
+  }
+
+  /* Animations */
+  @keyframes fadeDown {
+    from { opacity: 0; transform: translateY(-20px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .section-delay-1 { animation-delay: 0.1s; }
+  .section-delay-2 { animation-delay: 0.2s; }
+  .section-delay-3 { animation-delay: 0.3s; }
+
+  /* Currency toggle */
+  .currency-toggle {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 24px;
+    animation: fadeUp 0.6s 0.1s ease both;
+  }
+
+  .currency-btn {
+    padding: 8px 20px;
+    border-radius: 8px;
+    border: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-muted);
+    font-family: 'DM Sans', sans-serif;
+    font-size: 13px;
+    font-weight: 600;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+
+  .currency-btn.active {
+    background: var(--gold-dim);
+    border-color: var(--gold);
+    color: var(--gold-light);
+  }
+
+  .section-title {
+    font-family: 'Playfair Display', serif;
+    font-size: 16px;
+    color: var(--text-muted);
+    margin-bottom: 20px;
+    padding-bottom: 12px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .info-pill {
+    display: inline-block;
+    background: var(--gold-dim);
+    color: var(--gold);
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 1px;
+    text-transform: uppercase;
+    padding: 3px 10px;
+    border-radius: 20px;
+    margin-left: 8px;
+  }
+</style>
+</head>
+<body>
+
+<div class="container">
+
+  <header>
+    <div class="eyebrow">Planificación Financiera Personal</div>
+    <h1>Mi Fondo Jubilatorio</h1>
+    <p class="subtitle">Construí tu retiro de forma independiente. Calculá cuánto podés acumular con aportes regulares e interés compuesto.</p>
+  </header>
+
+  <!-- Currency toggle -->
+  <div class="currency-toggle">
+    <button class="currency-btn active" onclick="setCurrency('usd')">💵 Dólares / USDT</button>
+    <button class="currency-btn" onclick="setCurrency('ars')">🇦🇷 Pesos ARS</button>
+    <button class="currency-btn" onclick="setCurrency('btc')">₿ Bitcoin (sats)</button>
+  </div>
+
+  <!-- Inputs - Row 1 -->
+  <div class="grid section-delay-1" style="animation: fadeUp 0.6s 0.15s ease both;">
+    <div class="card">
+      <p class="section-title">Capital inicial</p>
+      <div class="field">
+        <label>Monto que invertís hoy</label>
+        <div class="input-wrap">
+          <span class="prefix" id="prefix1">$</span>
+          <input type="number" id="capital" value="5000" min="0" step="100" oninput="recalculate()">
+        </div>
+      </div>
+    </div>
+    <div class="card">
+      <p class="section-title">Aporte mensual</p>
+      <div class="field">
+        <label>Cuánto agregás cada mes</label>
+        <div class="input-wrap">
+          <span class="prefix" id="prefix2">$</span>
+          <input type="number" id="aporte" value="200" min="0" step="50" oninput="recalculate()">
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Inputs - Row 2: sliders -->
+  <div class="grid section-delay-2" style="animation: fadeUp 0.6s 0.2s ease both;">
+    <div class="card card-gold">
+      <div class="range-label">Tasa de rendimiento anual</div>
+      <div class="range-value" id="tasa-display">8%</div>
+      <input type="range" id="tasa" min="1" max="30" value="8" step="0.5" oninput="updateTasa(); recalculate()">
+      <div style="display:flex; justify-content:space-between; margin-top:8px;">
+        <span style="font-size:11px; color:var(--text-muted)">1% — Conservador</span>
+        <span style="font-size:11px; color:var(--text-muted)">30% — Agresivo</span>
+      </div>
+      <div style="margin-top:12px; font-size:11px; color:var(--text-muted)">
+        💡 Stablecoins DeFi: 5–15% · BTC long-term: 15–20% · S&P500: ~10% histórico
+      </div>
+    </div>
+    <div class="card card-gold">
+      <div class="range-label">Años de acumulación</div>
+      <div class="range-value" id="anos-display">25 años</div>
+      <input type="range" id="anos" min="1" max="45" value="25" step="1" oninput="updateAnos(); recalculate()">
+      <div style="display:flex; justify-content:space-between; margin-top:8px;">
+        <span style="font-size:11px; color:var(--text-muted)">1 año</span>
+        <span style="font-size:11px; color:var(--text-muted)">45 años</span>
+      </div>
+      <div style="margin-top:12px; font-size:11px; color:var(--text-muted)">
+        📅 Edad actual + años = tu edad al retiro
+      </div>
+    </div>
+  </div>
+
+  <!-- Frecuencia y capitalización -->
+  <div class="grid section-delay-3" style="animation: fadeUp 0.6s 0.25s ease both;">
+    <div class="card">
+      <div class="field">
+        <label>Frecuencia de aportes</label>
+        <select id="frecuencia" onchange="recalculate()">
+          <option value="12">Mensual</option>
+          <option value="4">Trimestral</option>
+          <option value="2">Semestral</option>
+          <option value="1">Anual</option>
+        </select>
+      </div>
+    </div>
+    <div class="card">
+      <div class="field">
+        <label>Capitalización del interés</label>
+        <select id="capitalizacion" onchange="recalculate()">
+          <option value="12">Mensual</option>
+          <option value="4">Trimestral</option>
+          <option value="1">Anual</option>
+          <option value="365">Diaria (DeFi)</option>
+        </select>
+      </div>
+    </div>
+  </div>
+
+  <!-- Inflación (opcional) -->
+  <div class="card section-delay-3" style="animation: fadeUp 0.6s 0.28s ease both; margin-bottom: 20px;">
+    <div style="display:flex; align-items:center; gap:12px; flex-wrap:wrap;">
+      <div style="flex:1; min-width:180px;">
+        <div class="range-label">Inflación estimada anual <span class="info-pill">opcional</span></div>
+        <div class="range-value" id="inflacion-display">3%</div>
+        <input type="range" id="inflacion" min="0" max="50" value="3" step="1" oninput="updateInflacion(); recalculate()">
+      </div>
+      <div style="font-size:12px; color:var(--text-muted); max-width:300px; line-height:1.6">
+        Ajusta el resultado a valor real. Para cálculos en USD/USDT usá inflación USD (~3%). Para ARS podés subir hasta 50%.
+      </div>
+    </div>
+  </div>
+
+  <!-- Results -->
+  <div class="results-header">
+    <h2>Tu Proyección</h2>
+    <div class="divider"></div>
+  </div>
+
+  <div class="kpi-grid">
+    <div class="kpi highlight">
+      <div class="kpi-label">Capital Final</div>
+      <div class="kpi-value" id="kpi-total">$0</div>
+      <div class="kpi-sub">valor nominal</div>
+    </div>
+    <div class="kpi highlight-green">
+      <div class="kpi-label">Ganancia por interés</div>
+      <div class="kpi-value" id="kpi-intereses">$0</div>
+      <div class="kpi-sub" id="kpi-intereses-pct">0% del total</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Total aportado</div>
+      <div class="kpi-value" id="kpi-aportado">$0</div>
+      <div class="kpi-sub">tu dinero real</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Renta mensual estimada</div>
+      <div class="kpi-value" id="kpi-renta">$0</div>
+      <div class="kpi-sub">al 4% anual (regla)</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Capital real (inflación)</div>
+      <div class="kpi-value" id="kpi-real">$0</div>
+      <div class="kpi-sub">poder adquisitivo hoy</div>
+    </div>
+    <div class="kpi">
+      <div class="kpi-label">Multiplicador</div>
+      <div class="kpi-value" id="kpi-mult">0x</div>
+      <div class="kpi-sub">veces lo aportado</div>
+    </div>
+  </div>
+
+  <!-- Chart -->
+  <div class="chart-card">
+    <div class="chart-title">Evolución del fondo por año — Capital acumulado vs Intereses generados</div>
+    <canvas id="chart" height="280"></canvas>
+  </div>
+
+  <!-- Table -->
+  <div class="table-card">
+    <div class="table-header">
+      <span class="table-title">Proyección año a año</span>
+      <button class="toggle-table" onclick="toggleTable()">Mostrar tabla ▼</button>
+    </div>
+    <div id="table-container" style="display:none; overflow-x:auto; max-height:400px; overflow-y:auto;">
+      <table>
+        <thead>
+          <tr>
+            <th>Año</th>
+            <th>Total Aportado</th>
+            <th>Capital Final</th>
+            <th>Intereses</th>
+            <th>Crecimiento %</th>
+          </tr>
+        </thead>
+        <tbody id="tabla-body"></tbody>
+      </table>
+    </div>
+  </div>
+
+  <div class="disclaimer">
+    ⚠️ Esta calculadora es solo una herramienta educativa. Los rendimientos pasados no garantizan resultados futuros. Consultá con un asesor financiero antes de tomar decisiones de inversión.
+  </div>
+
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/4.4.1/chart.umd.min.js"></script>
+<script>
+let currency = 'usd';
+let chart = null;
+let tableVisible = false;
+
+const symbols = { usd: '$', ars: '$', btc: '₿' };
+const names = { usd: 'USD', ars: 'ARS', btc: 'Sats' };
+
+function setCurrency(c) {
+  currency = c;
+  document.querySelectorAll('.currency-btn').forEach(b => b.classList.remove('active'));
+  event.target.classList.add('active');
+
+  // Adjust defaults
+  if (c === 'ars') {
+    document.getElementById('capital').value = 1000000;
+    document.getElementById('aporte').value = 50000;
+    document.getElementById('tasa').value = 18;
+    document.getElementById('inflacion').value = 40;
+  } else if (c === 'btc') {
+    document.getElementById('capital').value = 1000000;
+    document.getElementById('aporte').value = 100000;
+    document.getElementById('tasa').value = 20;
+    document.getElementById('inflacion').value = 3;
+  } else {
+    document.getElementById('capital').value = 5000;
+    document.getElementById('aporte').value = 200;
+    document.getElementById('tasa').value = 8;
+    document.getElementById('inflacion').value = 3;
+  }
+
+  updateTasa(); updateAnos(); updateInflacion();
+  recalculate();
+}
+
+function updateTasa() {
+  const v = parseFloat(document.getElementById('tasa').value);
+  document.getElementById('tasa-display').textContent = v + '%';
+}
+
+function updateAnos() {
+  const v = parseInt(document.getElementById('anos').value);
+  document.getElementById('anos-display').textContent = v + (v === 1 ? ' año' : ' años');
+}
+
+function updateInflacion() {
+  const v = parseInt(document.getElementById('inflacion').value);
+  document.getElementById('inflacion-display').textContent = v + '%';
+}
+
+function fmt(n) {
+  const sym = currency === 'btc' ? '₿' : '$';
+  if (Math.abs(n) >= 1e9) return sym + (n / 1e9).toFixed(2) + 'B';
+  if (Math.abs(n) >= 1e6) return sym + (n / 1e6).toFixed(2) + 'M';
+  if (Math.abs(n) >= 1e3) return sym + (n / 1e3).toFixed(1) + 'K';
+  return sym + n.toFixed(0);
+}
+
+function recalculate() {
+  const capital = parseFloat(document.getElementById('capital').value) || 0;
+  const aporteBase = parseFloat(document.getElementById('aporte').value) || 0;
+  const tasaAnual = parseFloat(document.getElementById('tasa').value) / 100;
+  const anos = parseInt(document.getElementById('anos').value);
+  const freq = parseInt(document.getElementById('frecuencia').value);
+  const cap = parseInt(document.getElementById('capitalizacion').value);
+  const inflacionAnual = parseFloat(document.getElementById('inflacion').value) / 100;
+
+  // Compound interest with regular contributions
+  const tasaPeriodo = tasaAnual / cap;
+  const periodosPorAno = cap;
+
+  let total = capital;
+  let totalAportado = capital;
+
+  const aportesPorPeriodo = aporteBase * (freq / cap);
+  // If freq > cap, we need to handle differently — simplify: always work in monthly steps
+  // Use monthly simulation for accuracy
+  const tasaMes = tasaAnual / 12;
+  const aporteMes = aporteBase / (12 / freq);
+
+  let saldo = capital;
+  const datosAnuales = [];
+
+  for (let año = 1; año <= anos; año++) {
+    for (let mes = 1; mes <= 12; mes++) {
+      // Interés según capitalización
+      if (cap === 12 || cap === 365) {
+        saldo *= (1 + tasaAnual / (cap === 365 ? 365 : 12));
+      }
+      // Aporte según frecuencia
+      if (freq === 12) saldo += aporteBase;
+      else if (freq === 4 && mes % 3 === 0) saldo += aporteBase;
+      else if (freq === 2 && mes % 6 === 0) saldo += aporteBase;
+      else if (freq === 1 && mes === 12) saldo += aporteBase;
+    }
+
+    // Annual capitalization
+    if (cap === 1) saldo *= (1 + tasaAnual);
+    else if (cap === 4) saldo *= Math.pow(1 + tasaAnual / 4, 4) / Math.pow(1 + tasaAnual / 4, 4) * (1); // already done monthly approx
+
+    const aportadoAño = capital + aporteBase * (
+      freq === 12 ? 12 * año :
+      freq === 4 ? 4 * año :
+      freq === 2 ? 2 * año :
+      1 * año
+    );
+
+    datosAnuales.push({
+      año,
+      saldo: Math.round(saldo),
+      aportado: Math.round(aportadoAño),
+      intereses: Math.round(saldo - aportadoAño)
+    });
+  }
+
+  // Redo with proper compound interest formula
+  // Using FV formula: FV = PV*(1+r)^n + PMT * [((1+r)^n - 1)/r]
+  // where r = effective annual rate, n = years, PMT = annual contribution
+  const r = tasaAnual;
+  const pmt = aporteBase * freq; // annual contribution
+  const n = anos;
+  const fv = capital * Math.pow(1 + r, n) + pmt * (Math.pow(1 + r, n) - 1) / r;
+  const aportadoTotal = capital + pmt * n;
+  const interesesTotal = fv - aportadoTotal;
+
+  // Build year-by-year with formula
+  const anuales = [];
+  for (let i = 1; i <= n; i++) {
+    const fvi = capital * Math.pow(1 + r, i) + pmt * (Math.pow(1 + r, i) - 1) / r;
+    const apt = capital + pmt * i;
+    anuales.push({
+      año: i,
+      saldo: Math.round(fvi),
+      aportado: Math.round(apt),
+      intereses: Math.round(fvi - apt)
+    });
+  }
+
+  // Real value (inflation-adjusted)
+  const fvReal = fv / Math.pow(1 + inflacionAnual, n);
+  const rentaMensual = fv * 0.04 / 12;
+  const mult = fv / aportadoTotal;
+  const pctIntereses = (interesesTotal / fv * 100).toFixed(1);
+
+  // Update KPIs
+  document.getElementById('kpi-total').textContent = fmt(fv);
+  document.getElementById('kpi-intereses').textContent = fmt(interesesTotal);
+  document.getElementById('kpi-intereses-pct').textContent = pctIntereses + '% del total';
+  document.getElementById('kpi-aportado').textContent = fmt(aportadoTotal);
+  document.getElementById('kpi-renta').textContent = fmt(rentaMensual) + '/mes';
+  document.getElementById('kpi-real').textContent = fmt(fvReal);
+  document.getElementById('kpi-mult').textContent = mult.toFixed(1) + 'x';
+
+  // Update chart
+  updateChart(anuales);
+
+  // Update table
+  buildTable(anuales);
+}
+
+function updateChart(data) {
+  const labels = data.map(d => 'Año ' + d.año);
+  const aportados = data.map(d => d.aportado);
+  const intereses = data.map(d => Math.max(0, d.intereses));
+
+  const ctx = document.getElementById('chart').getContext('2d');
+
+  if (chart) chart.destroy();
+
+  chart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [
+        {
+          label: 'Capital aportado',
+          data: aportados,
+          backgroundColor: 'rgba(79,142,247,0.5)',
+          borderColor: 'rgba(79,142,247,0.8)',
+          borderWidth: 1,
+          borderRadius: 3,
+          stack: 'stack'
+        },
+        {
+          label: 'Intereses acumulados',
+          data: intereses,
+          backgroundColor: 'rgba(201,168,76,0.6)',
+          borderColor: 'rgba(201,168,76,0.9)',
+          borderWidth: 1,
+          borderRadius: 3,
+          stack: 'stack'
+        }
+      ]
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: true,
+      animation: { duration: 400 },
+      plugins: {
+        legend: {
+          labels: {
+            color: '#8492a6',
+            font: { family: 'DM Sans', size: 12 },
+            boxWidth: 12,
+            boxHeight: 12
+          }
+        },
+        tooltip: {
+          backgroundColor: '#1a2235',
+          borderColor: 'rgba(201,168,76,0.3)',
+          borderWidth: 1,
+          titleColor: '#c9a84c',
+          bodyColor: '#f0f0f0',
+          padding: 12,
+          callbacks: {
+            label: ctx => ' ' + ctx.dataset.label + ': ' + fmt(ctx.raw)
+          }
+        }
+      },
+      scales: {
+        x: {
+          stacked: true,
+          ticks: {
+            color: '#8492a6',
+            font: { size: 10 },
+            maxTicksLimit: 10
+          },
+          grid: { color: 'rgba(255,255,255,0.04)' }
+        },
+        y: {
+          stacked: true,
+          ticks: {
+            color: '#8492a6',
+            font: { size: 11 },
+            callback: v => fmt(v)
+          },
+          grid: { color: 'rgba(255,255,255,0.06)' }
+        }
+      }
+    }
+  });
+}
+
+function buildTable(data) {
+  const tbody = document.getElementById('tabla-body');
+  let prev = 0;
+  tbody.innerHTML = data.map(d => {
+    const growth = prev > 0 ? ((d.saldo - prev) / prev * 100).toFixed(1) : '-';
+    prev = d.saldo;
+    const isLast = d.año === data[data.length - 1].año;
+    return `<tr ${isLast ? 'style="background:rgba(201,168,76,0.05)"' : ''}>
+      <td>${d.año === data[data.length-1].año ? '🏁 ' : ''}Año ${d.año}</td>
+      <td>${fmt(d.aportado)}</td>
+      <td class="td-gold">${fmt(d.saldo)}</td>
+      <td class="td-green">${fmt(d.intereses)}</td>
+      <td style="color:var(--text-muted)">${growth}%</td>
+    </tr>`;
+  }).join('');
+}
+
+function toggleTable() {
+  tableVisible = !tableVisible;
+  document.getElementById('table-container').style.display = tableVisible ? 'block' : 'none';
+  document.querySelector('.toggle-table').textContent = tableVisible ? 'Ocultar tabla ▲' : 'Mostrar tabla ▼';
+}
+
+// Init
+updateTasa(); updateAnos(); updateInflacion();
+recalculate();
+</script>
+</body>
+</html>
